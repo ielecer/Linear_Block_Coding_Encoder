@@ -21,88 +21,42 @@
 
 
 module encoder_tb();
-reg clk;
-reg [8:1] Din;
-wire [8:1] Qout1;
-wire [8:1] Qout2;
-wire [8:1] Qout3;
-wire [8:1] Qout4;
-wire [38:1] Cout;
 
-encoder M1(clk, Din, Qout1, Qout2, Qout3, Qout4, Cout);
-
-initial begin
-    clk = 0;
-    #5 clk = 1;
-    #5 clk = 0;
-    #5 clk = 1;
-    #5 clk = 0;
-    #5 clk = 1;
-    #5 clk = 0;
-    #5 clk = 1;
-    #5 clk = 0;
-    #5 clk = 1;
-    #5 clk = 0;
-    #5 clk = 1;
-    #5 clk = 0;
-    #5 clk = 1;
-    #5 clk = 0;
-    #5 clk = 1;
-    #5 clk = 0;
-    #5 clk = 1;
-    #5 clk = 0;
+    reg clk;
+    reg [31:0] Din;
+    wire [7:0] D[3:0];
+    wire clk_test;
+    wire [5:0] C;
+    encoder M1(
+        .clk(clk),
+        .Din(Din),
+        .Qout1(D[0]),
+        .Qout2(D[1]),
+        .Qout3(D[2]),
+        .Qout4(D[3]),
+        .clk_test(clk_test),
+        .C(C)
+        );
     
-    #5 clk = 1;
-    #5 clk = 0;
-    #5 clk = 1;
-    #5 clk = 0;
-    #5 clk = 1;
-    #5 clk = 0;
-    #5 clk = 1;
-    #5 clk = 0;
-    #5 clk = 1;
-    #5 clk = 0;
-    #5 clk = 1;
-    #5 clk = 0;
-    #5 clk = 1;
-    #5 clk = 0;
-    #5 clk = 1;
-    #5 clk = 0;
-    #5 clk = 1;
-    #5 clk = 0;
+    // 100MHz
+    parameter PERIOD = 10;
+    initial clk = 1'b0;
+    always begin
+        #(PERIOD/2) clk = ~clk;
+    end
     
-    #5 clk = 1;
-    #5 clk = 0;
-    #5 clk = 1;
-    #5 clk = 0;
-    #5 clk = 1;
-    #5 clk = 0;
-    #5 clk = 1;
-    #5 clk = 0;
-    #5 clk = 1;
-    #5 clk = 0;
-    #5 clk = 1;
-    #5 clk = 0;
-    #5 clk = 1;
-    #5 clk = 0;
-    #5 clk = 1;
-    #5 clk = 0;
-    #5 clk = 1;
-    #5 clk = 0;
-end
-
-initial begin
-    Din = 8'b11111111;  
-    #10 Din = 8'b11111111;
-    #10 Din = 8'b11111111;
-    #10 Din = 8'b11111111;
-    #10 Din = 8'b00000000;
-    #10 Din = 8'b00000000;
-    #10 Din = 8'b00000000;
-    #10 Din = 8'b00000000;
-    #10 Din = 8'b00000000;  
-    #10 Din = 8'b00000000;
-    #10 Din = 8'b11111111;
-    #10 Din = 8'b11111111;
-end
+    integer i;
+    initial begin
+        Din = 0;
+        #10 Din = 0;
+        #10 Din = 0;
+        #10 Din = 0;
+        for(i = 1; i < 256; i = i + 1)      // illegal to use i++
+            begin
+                #10 Din = i;
+                #10 Din = 0;
+                #10 Din = 0;
+                #10 Din = 0;
+            end
+    end
 endmodule
